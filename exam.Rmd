@@ -101,13 +101,11 @@ movies$Runtime = as.numeric(movies$Runtime)
 movies$Gross = gsub('[,]', '', movies$Gross)
 movies$Gross = as.numeric(movies$Gross)
 
-sapply(movies, class)
-
 # Checking for NA, NaN, Infinite and empty values
 
 sapply(movies, function(x) sum(is.na(x)))
 
-# A lot of NAs in gross -> we'll need to address them
+# A lot of NAs in gross
 
 # Let's add that Released_Year missing since it's just one NA record
 
@@ -122,8 +120,7 @@ sapply(movies, function(x) sum(x == ""))
 
 # Not good when there are a lot of unique values though
 
-# Since our Genre entries are composed by comma-separated values, we need to split them, one-hot encode them, and remove the original column since 
-# we won't need it anymore
+# Since our Genre entries are composed by comma-separated values, we need to split them, one-hot encode them, and remove the original column since we won't need it anymore
 
 movies = cbind(movies, mtabulate(strsplit(movies$Genre, ", ")))
 
@@ -270,7 +267,7 @@ ggplot(grossPerYearWrong, aes(x = Released_Year, y = meanGross)) +
   geom_line() +
   geom_smooth() +
   scale_x_continuous(name = "Released year", breaks = seq(1920, 2020, 10)) +
-  scale_y_continuous(name = "Gross") +
+  scale_y_continuous(name = "Gross ($)") +
   theme_bw()
 
 ```
@@ -313,20 +310,21 @@ Controllando però di che dati fossimo forniti...
 
 **Toy Story con praticamente gli stessi ricavi di Via col Vento?**
 
-<h3>Inflazione.</h3>
+<h3> Inflazione. </h3>
 
 ## Ricavi considerando l'inflazione
 
 ```{r adjinflation, echo = FALSE}
 
 # We need to adjust gross by inflation
-# prices - cumulative price increases (in percentages) from 1920 to 2020, sorted
 
-# Checkpoint - dataset without inflation correction and with
+# Checkpoint - dataset without inflation correction (movies) and with (moviesC)
 
 moviesC = movies
-
 years = sort(unique(moviesC$Released_Year))
+
+# CPI - cumulative price increases (in percentages) from 1920 to 2020, sorted
+
 CPI = c(1420.64, 1599.03, 1710.28, 1637.87, 1618.23, 1647.86, 1678.52, 1721.12, 1900.84, 2119.91, 2239.44, 2169.60, 2119.91, 2087.96, 2011.99,
   2056.93, 2087.96, 2072.34, 1968.89, 1765.81, 1657.96, 1627.99, 1589.59, 1459.63, 1263.80, 1161.94, 1177.84, 1161.94, 1069.72, 1047.65, 1039.05, 1030.58, 
   1034.80, 1018.11, 982.30, 952.34, 945.11, 927.46, 917.15, 907.04, 893.88, 881.05, 865.48, 838.66, 810.56, 773.93, 728.68, 683.83, 650.93, 627.58, 584.97, 
@@ -335,6 +333,8 @@ CPI = c(1420.64, 1599.03, 1710.28, 1637.87, 1618.23, 1647.86, 1678.52, 1721.12, 
   28.31, 26.72, 24.07, 21.06, 18.96, 17.51, 16.02)
 
 priceIncrease = setNames(CPI, as.list(years))
+
+# Updating grosses
 
 adjGross = function(x) {
   f = moviesC[moviesC$Movie_Title == x, ]
@@ -348,10 +348,10 @@ adjGross = function(x) {
   }
 }
 
+# Replacing grosses
+
 newPrices = sapply(moviesC$Movie_Title, adjGross)
 moviesC$Gross = as.array(newPrices)
-
-#sapply(moviesC, function(x) sum(is.na(x)))
 
 ```
 
@@ -370,7 +370,7 @@ ggplotly(ggplot(grossPerYear, aes(x = Released_Year, y = meanGross)) +
   geom_line() + 
   geom_smooth() + 
   scale_x_continuous(name = "Released year", breaks = seq(1920, 2020, 10)) + 
-  scale_y_continuous(name = "Gross") + 
+  scale_y_continuous(name = "Gross ($)") + 
   theme_bw())
 
 # Raw data
@@ -379,7 +379,7 @@ ggplotly(ggplot(grossPerYear, aes(x = Released_Year, y = meanGross)) +
 #   ggtitle("Distribution of gross over time", "Considering inflation") +
 #   geom_point() +
 #   scale_x_continuous(name = "Released year", breaks = seq(1920, 2020, 10)) +
-#   scale_y_continuous(name = "Gross", trans = "log") +
+#   scale_y_continuous(name = "Gross ($, log)", trans = "log") +
 #   theme_bw()
 
 ```
@@ -432,9 +432,9 @@ Sorprendentemente, l'andamento delle valutazioni medie dei film per anno è cara
 -   Molta più variabilità fino agli anni '60
 -   Andamento più piatto dopo i 2000
 
-------------------------------------------------------------------------
+## Allora? {.build}
 
-A questo punto, con una punta di clichè, concludiamo che </br>
+A questo punto, concludiamo che </br>
 
 *Sì, i tempi sono cambiati* </br>
 
@@ -454,7 +454,7 @@ ggplot(moviesC, aes(x = IMDB_Rating, y = Gross)) +
   ggtitle("Distribution of gross over rating") +
   geom_point(alpha = 0.3) +
   scale_x_continuous(name = "IMDB Rating") +
-  scale_y_continuous(name = "Gross", trans = "log") +
+  scale_y_continuous(name = "Gross ($, log)", trans = "log") +
   theme_bw()
 
 ```
@@ -495,7 +495,7 @@ grossPerRating = moviesC %>%
 ggplotly(ggplot(grossPerRating, aes(x = IMDB_Rating, y = meanGross)) +
   geom_point() +
   scale_x_continuous(name = "IMDB Rating") +
-  scale_y_continuous(name = "Gross") +
+  scale_y_continuous(name = "Gross ($)") +
   geom_smooth(method = "lm", formula = y ~ exp(x)) +
   theme_bw())
 
@@ -506,8 +506,6 @@ ggplotly(ggplot(grossPerRating, aes(x = IMDB_Rating, y = meanGross)) +
 Come possiamo vedere, la zona grigia che si riferisce al 'confidence interval' è abbastanza ampia: la correlazione non è fortissima. </br> Perchè? </br> Possiamo notare un 'outlier' che sta grandemente influenzando l'analisi.
 
 ```{r secondreg, echo = FALSE, fig.align = 'center'}
-
-# Can I remove outlier?
 
 # As we can see the last point at the far right is clearly an outlier -> very high rating but 'low' gross.
 # Since we are considering means and there's only one movie in the dataset with that rating, that is affecting our analysis.
@@ -529,41 +527,43 @@ grossPerRating = subset(grossPerRating, grossPerRating$IMDB_Rating != 9.3)
 #   theme_bw()
 
 
-# Clearly better!
+# Clearly better
 
 ```
 
 ```{r polyfit, echo = FALSE, fig.align = 'center'}
 
+# Let's replace exponential regression with polynomial regression
+
+# K-fold cross validation to find best degree of the poly to use, avoiding over and underfitting
+
 # Shuffling data
 
-moviesCShuf = grossPerRating[sample(nrow(grossPerRating)), ]
+gppShuf = grossPerRating[sample(nrow(grossPerRating)), ]
 
-# Number of folds to use - usually people go with 5 or 10
+# Number of folds to use - usually 5 or 10
 
 K = 5
 
-# Degrees of the poly 
+# Degrees of the poly to test
 
 degrees = 5
 
 # Splitting dataset in K = 5 equal folds
 
-folds = cut(seq(1, nrow(grossPerRating)), breaks = K, labels = FALSE)
+folds = cut(seq(1, nrow(gppShuf)), breaks = K, labels = FALSE)
 
 mse = matrix(data = NA, nrow = K, ncol = degrees)
 
-# K-fold cross validation
-
 for(i in 1:K){
     
-    # Training and testing data
+    # Splitting training and testing data
   
     testIndexes = which(folds == i, arr.ind = TRUE)
-    testData = moviesCShuf[testIndexes, ]
-    trainData = moviesCShuf[-testIndexes, ]
+    testData = gppShuf[testIndexes, ]
+    trainData = gppShuf[-testIndexes, ]
     
-    #use k-fold cv to evaluate models
+    # Evaluation
     
     for (j in 1:degrees){
         fitTrain = lm(meanGross ~ poly(IMDB_Rating, j), data = trainData)
@@ -590,11 +590,11 @@ ggplot(grossPerRating, aes(x = IMDB_Rating, y = meanGross)) +
   ggtitle("Distribution of gross over rating") +
   geom_point() +
   scale_x_continuous(name = "IMDB Rating") +
-  scale_y_continuous(name = "Gross") +
+  scale_y_continuous(name = "Gross ($)") +
   geom_smooth(method = "lm", formula = y ~ poly(x, 2)) +
   theme_bw()
 
-# Clearly better!
+# Clearly better (again)
 
 ```
 
@@ -623,9 +623,6 @@ Visualizziamo ora come si piazzano le votazioni quando comparati con la lunghezz
 
 ```{r ratingvsruntime, echo = FALSE, fig.align = 'center'}
 
-# What about people and long movies? Do they like them?
-# Other Ricky Gervais quote made me wonder
-
 # Grouped data
 
 ratingPerRuntime = moviesC %>%
@@ -634,14 +631,14 @@ ratingPerRuntime = moviesC %>%
 
 ggplot(ratingPerRuntime, aes(x = Runtime, y = meanRating)) + 
              ggtitle("Distribution of rating over runtime") + 
-             geom_point() + scale_x_continuous(name = "Runtime", breaks = seq(0, 350, 50)) + 
+             geom_point() + scale_x_continuous(name = "Runtime (min)", breaks = seq(0, 350, 50)) + 
              scale_y_continuous(name = "Rating") + 
              theme_bw()
 
 # summary(lm(meanRating ~ Runtime, ratingPerRuntime))
-#cor(ratingPerRuntime$Runtime, ratingPerRuntime$meanRating)
+# cor(ratingPerRuntime$Runtime, ratingPerRuntime$meanRating)
 
-# Surprise! No clear correlation
+# No clear correlation
  
 ```
 
@@ -654,8 +651,6 @@ Verifichiamo se il *runtime* influisce invece sui ricavi
 
 ```{r grossvsruntime, echo = FALSE, fig.align = 'center'}
 
-# But, are longer movies better on average?
-
 # Grouped data
 
 # grossPerRuntime = moviesC %>%
@@ -666,20 +661,35 @@ Verifichiamo se il *runtime* influisce invece sui ricavi
 #   ggtitle("Distribution of gross over runtime") +
 #   geom_point() +
 #   scale_x_continuous(name = "Runtime") +
-#   scale_y_continuous(name = "Gross", trans = "log") +
+#   scale_y_continuous(name = "Gross ($, log)", trans = "log") +
 #   theme_bw()
 
 # Raw data
 
-# Using a log scale because gross was smahsed against x axis
+# Using a log scale otherwise gross would be smashed against x-axis
 
 ggplot(moviesC, aes(x = Runtime, y = Gross)) +
   ggtitle("Distribution of gross over runtime") +
   geom_point(alpha = 0.45) +
-  scale_x_continuous(name = "Runtime") +
-  scale_y_continuous(name = "Gross", trans = "log") +
+  scale_x_continuous(name = "Runtime (min)") +
+  scale_y_continuous(name = "Gross ($, log)", trans = "log") +
   theme_bw()
 
 ```
 
 Il grafico ci mostra dove troviamo la maggior parte di film: intorno ai 130 minuti e al miliardo di incassi. </br> Ancora una volta l'analisi ci smentisce, evidentemente la lunghezza del film non è un fattore che influenza incasso o votazione.
+
+## Concludendo
+
+1. I tempi sono davvero cambiati e il cinema con essi? </br>
+Sì. Il cinema ha avuto il suo picco di popolarità tra gli anni '60 e '80, a livello di ricavi. </br>
+Le persone ritengono, in media, migliori i film più vecchi rispetto a quelli più recenti.
+
+2. Blockbuster. Sono davvero bei film o solo incredibilmente popolari? </br>
+"Blockbuster" sembra coincidere con "bel film", non sono solo popolari ma anche valutati bene. </br>
+Vale anche il contrario: un film con votazioni alte solitamente ha anche incassi elevati.
+
+3. Le persone sono infastidite dai film (troppo) lunghi? </br>
+No. La lunghezza di un film non sembra essere un fattore che incide sulla valutazione o sul ricavo dello stesso. </br>
+
+# Fin.
