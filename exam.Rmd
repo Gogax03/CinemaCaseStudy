@@ -21,7 +21,8 @@ knitr::opts_chunk$set(cache = FALSE, message = FALSE, warning = FALSE)
 
 ## Perchè?
 
-> "No one cares about movies anymore. No one goes to cinema, no one really watches network TV. Everyone is watching Netflix." </br> **Ricky Gervais**
+> "No one cares about movies anymore. No one goes to cinema, no one really watches network TV. Everyone is watching Netflix." </br> 
+**Ricky Gervais**
 
 -   I tempi sono davvero cambiati e il cinema con essi?
 -   Blockbuster. Sono davvero bei film o solo incredibilmente popolari?
@@ -247,12 +248,12 @@ ggplot(genreCounts, aes(x = reorder(genre, -count), y = count, fill = genre)) +
 
 Incontriamo già una situazione interessante. </br>
 
--   Chiara prevalenza del genere drammatico
--   La commedia è il secondo genere con più film
+Chiara prevalenza del genere drammatico </br>
+La commedia è il secondo genere con più film </br>
 
 # Il cinema nel tempo
 
-## Ricavi {.build}
+## Ricavi
 
 Andiamo ad esplorare l'andamento dei ricavi medi (dei film) all'anno, non prima di reperire i dati mancanti.
 
@@ -278,13 +279,13 @@ ggplot(grossPerYearWrong, aes(x = Released_Year, y = meanGross)) +
 
 Sorprendentemente, ci troviamo di fronte ad un andamento strettamente crescente, con i minimi guadagni che si piazzano tra il 1920 e il 1950. Perchè? </br>
 
-Siamo a cavallo tra "Silent Years" e "Sound Era" (1920 - 1940) </br>
-Ma... </p> Sono anche gli anni in cui nascono quelli che diventeranno i grandi colossi cinematografici (Paramount, MGM, Fox) </br>
+- Siamo a cavallo tra "Silent Years" e "Sound Era" (1920 - 1940) </br>
+- Ma... </p> Sono anche gli anni in cui nascono quelli che diventeranno i grandi colossi cinematografici (Paramount, MGM, Fox) </br>
 
 <hr>
 
-Gli stessi materiali che servivano per la celluloide erano necessari per la polvere da sparo (Prima Guerra Mondiale) </br>
-Ma... </p> il cinema americano ne ha beneficiato tantissimo, ed ha avuto un periodo di crescita, prosperità senza precedenti </br>
+- Gli stessi materiali che servivano per la celluloide erano necessari per la polvere da sparo (Prima Guerra Mondiale) </br>
+- Ma... </p> il cinema americano ne ha beneficiato tantissimo, ed ha avuto un periodo di crescita, prosperità senza precedenti </br>
 
 <br>
 
@@ -472,16 +473,14 @@ grossPerRating = moviesC %>%
   as.data.frame()
 
 
-ggplot(grossPerRating, aes(x = IMDB_Rating, y = meanGross)) + 
-  ggtitle("Distribution of gross over rating") + 
-  geom_point() + 
-  scale_x_continuous(name = "IMDB Rating") + 
-  scale_y_continuous(name = "Gross") + 
-  theme_bw()
+# ggplot(grossPerRating, aes(x = IMDB_Rating, y = meanGross)) + 
+#   ggtitle("Distribution of gross over rating") + 
+#   geom_point() + 
+#   scale_x_continuous(name = "IMDB Rating") + 
+#   scale_y_continuous(name = "Gross") + 
+#   theme_bw()
 
 ```
-
-Ora lo vediamo molto meglio: visualizziamo sul grafico la correlazione.
 
 <center>
 
@@ -489,15 +488,15 @@ Ora lo vediamo molto meglio: visualizziamo sul grafico la correlazione.
 
 # Looks like an exponential regression could do okay
 
-m = lm(meanGross ~ exp(IMDB_Rating), grossPerRating)
+# m = lm(meanGross ~ exp(IMDB_Rating), grossPerRating)
 # summary(m)
 # cor(grossPerRating$meanGross, exp(grossPerRating$IMDB_Rating))
 
-ggplotly(ggplot(grossPerRating, aes(x = IMDB_Rating, y = meanGross)) + 
-  geom_point() + 
-  scale_x_continuous(name = "IMDB Rating") + 
-  scale_y_continuous(name = "Gross") + 
-  geom_smooth(method = "lm", formula = y ~ exp(x)) + 
+ggplotly(ggplot(grossPerRating, aes(x = IMDB_Rating, y = meanGross)) +
+  geom_point() +
+  scale_x_continuous(name = "IMDB Rating") +
+  scale_y_continuous(name = "Gross") +
+  geom_smooth(method = "lm", formula = y ~ exp(x)) +
   theme_bw())
 
 ```
@@ -517,24 +516,22 @@ Come possiamo vedere, la zona grigia che si riferisce al 'confidence interval' �
 
 grossPerRating = subset(grossPerRating, grossPerRating$IMDB_Rating != 9.3)
 
-m = lm(meanGross ~ exp(IMDB_Rating), grossPerRating)
+# m = lm(meanGross ~ exp(IMDB_Rating), grossPerRating)
 # summary(m)
 # cor(grossPerRating$meanGross, exp(grossPerRating$IMDB_Rating))
 
-ggplot(grossPerRating, aes(x = IMDB_Rating, y = meanGross)) + 
-  ggtitle("Distribution of gross over rating") + 
-  geom_point() + 
-  scale_x_continuous(name = "IMDB Rating") + 
-  scale_y_continuous(name = "Gross") + 
-  geom_smooth(method = "lm", formula = y ~ exp(x)) + 
-  theme_bw()
+# ggplot(grossPerRating, aes(x = IMDB_Rating, y = meanGross)) + 
+#   ggtitle("Distribution of gross over rating") + 
+#   geom_point() + 
+#   scale_x_continuous(name = "IMDB Rating") + 
+#   scale_y_continuous(name = "Gross") + 
+#   geom_smooth(method = "lm", formula = y ~ exp(x)) + 
+#   theme_bw()
 
 
 # Clearly better!
 
 ```
-
-Molto meglio: vediamo come l'influenza dell'outlier fosse considervole. </br> Fino ad ora abbiamo testato solo una regressione esponenziale, e se riuscissimo ad ottenere un risultato ancora migliore?
 
 ```{r polyfit, echo = FALSE, fig.align = 'center'}
 
@@ -585,16 +582,16 @@ for(i in 1:K){
 
 ```{r polyreg data, echo = FALSE, fig.align = 'center'}
 
-m = lm(meanGross ~ poly(IMDB_Rating, 2), grossPerRating)
+# m = lm(meanGross ~ poly(IMDB_Rating, 2), grossPerRating)
 # summary(m)
 # cor(grossPerRating$meanGross, poly(grossPerRating$IMDB_Rating, 2))
 
-ggplot(grossPerRating, aes(x = IMDB_Rating, y = meanGross)) + 
-  ggtitle("Distribution of gross over rating") + 
-  geom_point() + 
-  scale_x_continuous(name = "IMDB Rating") + 
-  scale_y_continuous(name = "Gross") + 
-  geom_smooth(method = "lm", formula = y ~ poly(x, 2)) + 
+ggplot(grossPerRating, aes(x = IMDB_Rating, y = meanGross)) +
+  ggtitle("Distribution of gross over rating") +
+  geom_point() +
+  scale_x_continuous(name = "IMDB Rating") +
+  scale_y_continuous(name = "Gross") +
+  geom_smooth(method = "lm", formula = y ~ poly(x, 2)) +
   theme_bw()
 
 # Clearly better!
@@ -615,16 +612,14 @@ Visualizziamo ora come si piazzano le votazioni quando comparati con la lunghezz
 
 # Raw data
 
-ggMarginal(ggplot(movies, aes(x = Runtime, y = IMDB_Rating)) +
-             ggtitle("Distribution of rating over runtime") +
-             geom_point(alpha = 0.3) +
-             scale_x_continuous(name = "Runtime") +
-             scale_y_continuous(name = "Rating") +
-             theme_bw(), type = "boxplot")
+# ggMarginal(ggplot(movies, aes(x = Runtime, y = IMDB_Rating)) +
+#              ggtitle("Distribution of rating over runtime") +
+#              geom_point(alpha = 0.3) +
+#              scale_x_continuous(name = "Runtime") +
+#              scale_y_continuous(name = "Rating") +
+#              theme_bw(), type = "boxplot")
 
 ```
-
-Vediamo come la maggior parte dei film si aggiri sui 120 minuti, e le votazioni intorno all'8. </br> Per come sono disposti i dati, non sembra esserci correlazione significativa: consideriamo le medie per ogni valore di *runtime* per confermarlo.
 
 ```{r ratingvsruntime, echo = FALSE, fig.align = 'center'}
 
@@ -650,7 +645,8 @@ ggplot(ratingPerRuntime, aes(x = Runtime, y = meanRating)) +
  
 ```
 
-Il grafico conferma l'ipotesi: non si vede nessuna distribuzione particolare dei dati. </br> Sorprendente.
+Vediamo come la maggior parte dei film si aggiri sui 120 minuti, e le votazioni intorno all'8. </br> Per come sono disposti i dati, non sembra esserci correlazione significativa. </br>
+Sorprendente.
 
 ## Lunghezza del film e ricavi
 
