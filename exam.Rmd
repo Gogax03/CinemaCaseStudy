@@ -373,15 +373,6 @@ ggplotly(ggplot(grossPerYear, aes(x = Released_Year, y = meanGross)) +
   scale_y_continuous(name = "Gross ($)") + 
   theme_bw())
 
-# Raw data
-
-# ggplot(moviesC, aes(x = Released_Year, y = Gross)) +
-#   ggtitle("Distribution of gross over time", "Considering inflation") +
-#   geom_point() +
-#   scale_x_continuous(name = "Released year", breaks = seq(1920, 2020, 10)) +
-#   scale_y_continuous(name = "Gross ($, log)", trans = "log") +
-#   theme_bw()
-
 ```
 
 </center> </br>
@@ -413,15 +404,6 @@ ggplotly(ggplot(ratingPerYear, aes(x = Released_Year, y = meanRating)) +
   scale_x_continuous(name = "Released year", breaks = seq(1920, 2020, 10)) + 
   scale_y_continuous(name = "Rating") + 
   theme_bw())
-
-# Raw data
-# 
-# ggplot(moviesC, aes(x = Released_Year, y = IMDB_Rating)) +
-#   ggtitle("Distribution of rating over time") +
-#   geom_point() +
-#   scale_x_continuous(name = "Released year", breaks = seq(1920, 2020, 10)) +
-#   scale_y_continuous(name = "Rating") +
-#   theme_bw()
 
 ```
 
@@ -472,14 +454,6 @@ grossPerRating = moviesC %>%
   summarise_at(vars(Gross), list(meanGross = mean)) %>%
   as.data.frame()
 
-
-# ggplot(grossPerRating, aes(x = IMDB_Rating, y = meanGross)) + 
-#   ggtitle("Distribution of gross over rating") + 
-#   geom_point() + 
-#   scale_x_continuous(name = "IMDB Rating") + 
-#   scale_y_continuous(name = "Gross") + 
-#   theme_bw()
-
 ```
 
 <center>
@@ -517,15 +491,6 @@ grossPerRating = subset(grossPerRating, grossPerRating$IMDB_Rating != 9.3)
 # m = lm(meanGross ~ exp(IMDB_Rating), grossPerRating)
 # summary(m)
 # cor(grossPerRating$meanGross, exp(grossPerRating$IMDB_Rating))
-
-# ggplot(grossPerRating, aes(x = IMDB_Rating, y = meanGross)) + 
-#   ggtitle("Distribution of gross over rating") + 
-#   geom_point() + 
-#   scale_x_continuous(name = "IMDB Rating") + 
-#   scale_y_continuous(name = "Gross") + 
-#   geom_smooth(method = "lm", formula = y ~ exp(x)) + 
-#   theme_bw()
-
 
 # Clearly better
 
@@ -608,19 +573,6 @@ Inaspettato: di solito, quindi, la qualità di un film viene premiata a livello 
 
 Visualizziamo ora come si piazzano le votazioni quando comparati con la lunghezza del film.
 
-```{r ratingvsruntimeraw, echo = FALSE, fig.align = 'center'}
-
-# Raw data
-
-# ggMarginal(ggplot(movies, aes(x = Runtime, y = IMDB_Rating)) +
-#              ggtitle("Distribution of rating over runtime") +
-#              geom_point(alpha = 0.3) +
-#              scale_x_continuous(name = "Runtime") +
-#              scale_y_continuous(name = "Rating") +
-#              theme_bw(), type = "boxplot")
-
-```
-
 ```{r ratingvsruntime, echo = FALSE, fig.align = 'center'}
 
 # Grouped data
@@ -650,19 +602,6 @@ Sorprendente.
 Verifichiamo se il *runtime* influisce invece sui ricavi
 
 ```{r grossvsruntime, echo = FALSE, fig.align = 'center'}
-
-# Grouped data
-
-# grossPerRuntime = moviesC %>%
-#   group_by(Runtime) %>%
-#   summarise_at(vars(Gross), list(meanGross = mean))
-# 
-# ggplot(grossPerRuntime, aes(x = Runtime, y = meanGross)) +
-#   ggtitle("Distribution of gross over runtime") +
-#   geom_point() +
-#   scale_x_continuous(name = "Runtime") +
-#   scale_y_continuous(name = "Gross ($, log)", trans = "log") +
-#   theme_bw()
 
 # Raw data
 
