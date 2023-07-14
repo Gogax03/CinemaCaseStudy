@@ -286,6 +286,8 @@ Sorprendentemente, ci troviamo di fronte ad un andamento strettamente crescente,
 
 <br>
 
+[Fonti](https://www.britannica.com/art/history-of-the-motion-picture)
+
 **Come è possibile che negli anni di Charlie Chaplin, di "Via Col Vento", di "Quarto Potere" i guadagni non si avvicino neanche lontanamente alla media degli anni successivi?**
 
 ## Ipotesi: distribuzione dei dati {.build}
@@ -613,7 +615,6 @@ ggplot(moviesC, aes(x = Runtime, y = Gross)) +
   scale_x_continuous(name = "Runtime (min)") +
   scale_y_continuous(name = "Gross ($, log)", trans = "log") +
   theme_bw()
-
 ```
 
 Il grafico ci mostra dove troviamo la maggior parte di film: intorno ai 130 minuti e al miliardo di incassi. </br> Ancora una volta l'analisi ci smentisce, evidentemente la lunghezza del film non è un fattore che influenza incasso o votazione.
